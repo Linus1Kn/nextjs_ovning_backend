@@ -37,9 +37,9 @@ export default function Home() {
       <div className="bg-gray-800 flex flex-col p-2 rounded-md gap-4">
       
       {error ? (
-        <p>{error}</p>
+        <p className="bg-red-600 text-white rounded-md p-2">{error}</p>
       ) : list.length === 0 ? (
-        <p className="bg-red-600 text-white rounded-md p-2">Loading...</p>
+        <p>Loading...</p>
       ) : 
       (list.map(place => (
 
