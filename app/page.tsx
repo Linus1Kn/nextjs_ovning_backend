@@ -1,22 +1,56 @@
 'use client'
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+type placeType = {
+  id: number,
+  name: string,
+  lat: number,
+  lng: number,
+}
 
 export default function Home() {
 
-  const [data, setData] = useState(null)
+  const [list, setList] = useState<[placeType?]>([])
+  const [error, setError] = useState<string|null>(null)
 
   async function getData() {
-    const res = await fetch("/api/test")
-    const data = await res.json()
-    console.log(data)
+    setError(null)
+
+    try {
+      const res = await fetch("/api/map")
+      const data = await res.json()
+      setList(data)
+    } catch (err) {
+      setError("Failed to load data")
+    }
   }
-  getData()
+
+  useEffect(()=> {
+    getData()
+  }, [])
+  
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1>hi</h1>
+    <div className="flex flex-col min-h-screen items-center justify-center gap-5 bg-black">
+      <h2 className="font-bold text-4xl">Fun Coordinates Website</h2>
+
+      <div className="bg-gray-800 flex flex-col p-2 rounded-md gap-4">
+      
+      {error ? (
+        <p>{error}</p>
+      ) : list.length === 0 ? (
+        <p>Loading...</p>
+      ) : 
+      (list.map(place => (
+
+        <div key={place.id}>
+          <p className="font-bold">Name: {place.name}</p>
+          <p>LAT: {place.lat} LONG: {place.lng}</p>
+        </div>
+      
+      )))}
+
+      </div>
     </div>
   );
 }
-//comment
