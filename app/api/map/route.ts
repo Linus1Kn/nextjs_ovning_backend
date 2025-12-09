@@ -6,3 +6,18 @@ const coords = [
 export async function GET() {
     return Response.json(coords)
 }
+
+export async function POST(req: Request) {
+    const body = await req.json();
+
+    const newCoord = {
+        id: coords.length + 1,
+        name: body.name || "unknown",
+        lat: body.lat || 0,
+        lng: body.lng || 0,
+    }
+
+    coords.push(newCoord)
+
+    return Response.json(coords)
+}
