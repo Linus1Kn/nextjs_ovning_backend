@@ -39,7 +39,7 @@ export default function Home() {
       {error ? (
         <p>{error}</p>
       ) : list.length === 0 ? (
-        <p>Loading...</p>
+        <p className="bg-red-600 text-white rounded-md p-2">Loading...</p>
       ) : 
       (list.map(place => (
 
