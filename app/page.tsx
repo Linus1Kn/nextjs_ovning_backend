@@ -2,58 +2,53 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+type placeType = {
+  id: number,
+  name: string,
+  lat: number,
+  lng: number,
+}
 
 export default function Home() {
 
-  const [result, setResult] = useState(null)
+  const [list, setList] = useState<[placeType?]>([])
+  const [error, setError] = useState<string|null>(null)
 
   async function getData() {
-    const res = await fetch("/api/test")
-    const data = await res.json()
-    console.log(data)
-    setResult(data)
+    setError(null)
+
+    try {
+      const res = await fetch("/api/map")
+      const data = await res.json()
+      setList(data)
+    } catch (err) {
+      setError("Failed to load data")
+    }
   }
 
-  async function postData(e: React.FormEvent) {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    console.log("sent", data)
-    const res = await fetch('/api/test', { method: 'POST', body: JSON.stringify(data) })
-    const resdata = await res.json()
-    console.log("res", resdata)
-  }
-
-  useEffect(() => {
-
+  useEffect(()=> {
     getData()
-    
   }, [])
   
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center gap-2 bg-zinc-50 font-sans dark:bg-black">
-      <form onSubmit={postData} className="flex flex-col">
-        <label htmlFor="name">Name</label>
-        <input required type="text" name="name" id="name" placeholder="Name here" />
+    <div className="flex flex-col min-h-screen items-center justify-center gap-5 bg-black">
+      <h2 className="font-bold text-4xl">Fun Coordinates Website</h2>
 
-        <label htmlFor="message">Message</label>
-        <textarea required name="message" id="message" placeholder="Message here"></textarea>
+      <div className="bg-gray-800 flex flex-col p-2 rounded-md gap-4">
+      
+      {error ? (
+        <p className="bg-red-600 text-white rounded-md p-2">{error}</p>
+      ) : list.length === 0 ? (
+        <p>Loading...</p>
+      ) : 
+      (list.map(place => (
 
-        <button type="submit" className="p-2 bg-green-500 hover:bg-green-400 rounded-md">Publish</button>
-      </form>
-
-      <div className="w-full h-0.5 bg-gray-500 max-w-1/2"></div>
-
-      <div>
-
-        {result === null && <p>Loading...</p>}
-        {Array.isArray(result) &&
-          result.map((item, idx) => (
-            <p key={idx}>
-              <strong>{item.name}:</strong> {item.message}
-            </p>
-        ))}
+        <div key={place.id}>
+          <p className="font-bold">Name: {place.name}</p>
+          <p>LAT: {place.lat} LONG: {place.lng}</p>
+        </div>
+      
+      )))}
 
       </div>
     </div>
