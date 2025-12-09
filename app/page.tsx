@@ -35,13 +35,27 @@ export default function Home() {
     }
   }
 
-  async function submitHandler(e) {
+  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     
     setFormMsg(null)
 
+    const form = e.currentTarget
+    const formData = new FormData(form)
+    const body = {
+      name: formData.get("name") as string,
+      lat: Number(formData.get("lat")),
+      lng: Number(formData.get("lng")),
+    }
+
     try {
-      const res = await fetch('/api/map', { method: 'POST', body: JSON.stringify({name:"hello",lat:1,lng:1}) })
+      const res = await fetch('/api/map', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
       const data = await res.json()
       setList(data)
       setFormMsg({
@@ -67,11 +81,11 @@ export default function Home() {
 
       <form onSubmit={submitHandler} className="bg-gray-800 flex flex-col p-2 rounded-md gap-1">
         <label htmlFor="name">Name</label>
-        <input required type="text" id="name" className="bg-gray-700 p-2 rounded-md" />
+        <input required type="text" id="name" name="name" className="bg-gray-700 p-2 rounded-md" />
         <label htmlFor="lat">Latitude</label>
-        <input required type="number" id="lat" className="bg-gray-700 p-2 rounded-md" />
+        <input required type="number" id="lat" name="lat" className="bg-gray-700 p-2 rounded-md" />
         <label htmlFor="lng">Longitude</label>
-        <input required type="number" id="lng" className="bg-gray-700 p-2 rounded-md" />
+        <input required type="number" id="lng" name="lng" className="bg-gray-700 p-2 rounded-md" />
         <button className="cursor-pointer p-4 py-2 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded-md">Submit</button>
         {formMsg && (<p className={"text-white rounded-md p-2 " + formMsgColors[formMsg.type]}>{formMsg.message}</p>)}
       </form>
