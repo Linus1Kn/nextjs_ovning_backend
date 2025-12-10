@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const newCoord = {
-        id: coords.length + 1,
+        id: Math.max(...coords.map(c => c.id), 0) + 1,
         name: body.name || "unknown",
         lat: body.lat || 0,
         lng: body.lng || 0,

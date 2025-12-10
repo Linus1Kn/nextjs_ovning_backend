@@ -113,9 +113,9 @@ export default function Home() {
       ) : list.length === 0 ? (
         <p>Loading...</p>
       ) : 
-      (list.map((place, i) => (
+      (list.map(place => (
 
-        <Location key={i} id={place.id} name={place.name} lat={place.lat} lng={place.lng} setModal={setModal} setList={setList}/>
+        <Location key={place.id} id={place.id} name={place.name} lat={place.lat} lng={place.lng} setModal={setModal} setList={setList}/>
       
       )))}
 
