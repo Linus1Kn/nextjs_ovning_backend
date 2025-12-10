@@ -21,3 +21,37 @@ export async function POST(req: Request) {
 
     return Response.json(coords)
 }
+
+export async function PUT(req: Request) {
+    const body = await req.json();
+    const { id, name, lat, lng } = body;
+
+    const index = coords.findIndex(c => c.id === id);
+    if (index === -1) {
+        return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
+    }
+
+    coords[index] = {
+        ...coords[index],
+        ...(name !== undefined && { name }),
+        ...(lat !== undefined && { lat }),
+        ...(lng !== undefined && { lng })
+    };
+
+    return Response.json(coords);
+}
+
+export async function DELETE(req: Request) {
+    const body = await req.json()
+
+    console.log(body.id)
+
+    const index = coords.findIndex(c => c.id === body.id);
+    if (index === -1) {
+        return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
+    }
+
+    coords.splice(index, 1)
+
+    return Response.json(coords)
+}

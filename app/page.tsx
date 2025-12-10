@@ -1,6 +1,8 @@
 'use client'
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Location from "./components/Location";
+import Modal from "./components/Modal";
 
 type placeType = {
   id: number,
@@ -16,6 +18,7 @@ type formMsgType = {
 export default function Home() {
 
   const [list, setList] = useState<[placeType?]>([])
+  const [modal, setModal] = useState<any>(null)
   const [error, setError] = useState<string|null>(null)
   const [formMsg, setFormMsg] = useState<formMsgType|null>(null)
   const formMsgColors = {
@@ -77,6 +80,19 @@ export default function Home() {
   
   return (
     <div className="flex flex-col min-h-screen items-center justify-center gap-5 bg-black">
+      
+      {modal && (
+        <Modal 
+          title={modal.title} 
+          description={modal.description} 
+          id={modal.id}
+          setModal={setModal} 
+          onConfirm={modal.onConfirm}
+          formInfo={modal.formInfo}
+        />
+      )}
+      
+
       <h2 className="font-bold text-4xl">Fun Coordinates Website</h2>
 
       <form onSubmit={submitHandler} className="bg-gray-800 flex flex-col p-2 rounded-md gap-1">
@@ -99,10 +115,7 @@ export default function Home() {
       ) : 
       (list.map(place => (
 
-        <div key={place.id}>
-          <p className="font-bold">Name: {place.name}</p>
-          <p>LAT: {place.lat} LONG: {place.lng}</p>
-        </div>
+        <Location key={place.id} id={place.id} name={place.name} lat={place.lat} lng={place.lng} setModal={setModal} setList={setList}/>
       
       )))}
 
