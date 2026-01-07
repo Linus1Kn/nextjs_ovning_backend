@@ -53,10 +53,6 @@ export default function Login({setRole}: loginType) {
 			console.log("uh oh!")
 		}
 	}
-	
-	async function logout() {
-		await fetch('/api/auth', { method: 'DELETE' });
-	}
 
   return (
     <form onSubmit={submitHandler} className="bg-gray-800 flex flex-col p-2 rounded-md gap-1">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Location from "./components/Location";
 import Modal from "./components/Modal";
 import Login from "./components/Login";
+import Logout from "./components/Logout";
 
 type placeType = {
   id: number,
@@ -107,7 +108,10 @@ export default function Home() {
 
       {role ? 
       (
-        <p>Logged in as: <span className="font-black text-green-500">{role}</span></p>
+        <>
+          <p>Logged in as: <span className="font-black text-green-500">{role}</span> <Logout setRole={setRole}/></p>
+          
+        </>
       ) : 
       (
         <Login setRole={setRole}/>
