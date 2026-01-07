@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 type locationProps = {
+	role: string|null,
 	id: number,
 	name: string,
 	lat: number,
@@ -9,7 +10,7 @@ type locationProps = {
 	setList: any,
 }
 
-export default function Location({ id, name, lat, lng, setModal, setList }: locationProps) {
+export default function Location({ role, id, name, lat, lng, setModal, setList }: locationProps) {
 
 	function showModal(title: string, description: string, onConfirm: any, formInfo?: {}) {
 		setModal({
@@ -37,7 +38,9 @@ export default function Location({ id, name, lat, lng, setModal, setList }: loca
         body: JSON.stringify(body),
       })
       const data = await res.json()
-      setList(data)
+      if (data && data.error == undefined){
+		setList(data)
+	  }
       
     } catch (err) {
       console.error("failed to apply changes")
@@ -59,7 +62,9 @@ export default function Location({ id, name, lat, lng, setModal, setList }: loca
         body: JSON.stringify(body),
       })
       const data = await res.json()
-      setList(data)
+      if (data && data.error == undefined){
+		setList(data)
+	  }
       
     } catch (err) {
       console.error("failed to delete")
@@ -92,10 +97,14 @@ export default function Location({ id, name, lat, lng, setModal, setList }: loca
 		<div className="bg-gray-700 p-2 rounded-md">
 			<p className="font-bold">Name: {name}</p>
 			<p>LAT: {lat} LONG: {lng}</p>
-			<div className="flex gap-2">
-				<button onClick={editHandler} className="p-2 py-0.5 rounded-md font-bold cursor-pointer bg-amber-400 hover:bg-amber-300">Edit</button>
-				<button onClick={deleteHandler} className="p-2 py-0.5 rounded-md font-bold cursor-pointer bg-rose-500 hover:bg-rose-400">Delete</button>
-			</div>
+			{role==="admin" ? (
+				<div className="flex gap-2">
+					<button onClick={editHandler} className="p-2 py-0.5 rounded-md font-bold cursor-pointer bg-amber-400 hover:bg-amber-300">Edit</button>
+					<button onClick={deleteHandler} className="p-2 py-0.5 rounded-md font-bold cursor-pointer bg-rose-500 hover:bg-rose-400">Delete</button>
+				</div>
+			) : (
+				<></>
+			)}
 		</div>
 	)
 }

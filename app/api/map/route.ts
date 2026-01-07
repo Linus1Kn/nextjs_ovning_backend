@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers'
+
 const coords = [ 
     { "id": 1, "name": "Skolan", "lat": 59.3, "lng": 18.1 }, 
     { "id": 2, "name": "Biblioteket", "lat": 59.4, "lng": 18.05 } 
@@ -8,6 +10,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+    const cookieStore = await cookies()
+    const role = cookieStore.get('role')
+    if (role == undefined || role.value != "user"){return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 })}
+
     const body = await req.json();
 
     const newCoord = {
@@ -23,6 +29,10 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
+    const cookieStore = await cookies()
+    const role = cookieStore.get('role')
+    if (role == undefined || role.value != "admin"){return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 })}
+
     const body = await req.json();
     const { id, name, lat, lng } = body;
 
@@ -42,6 +52,10 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+    const cookieStore = await cookies()
+    const role = cookieStore.get('role')
+    if (role == undefined || role.value != "admin"){return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 })}
+
     const body = await req.json()
 
     console.log(body.id)

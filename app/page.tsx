@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Location from "./components/Location";
 import Modal from "./components/Modal";
+import Login from "./components/Login";
 
 type placeType = {
   id: number,
@@ -17,6 +18,7 @@ type formMsgType = {
 
 export default function Home() {
 
+  const [role, setRole] = useState<string|null>()
   const [list, setList] = useState<[placeType?]>([])
   const [modal, setModal] = useState<any>(null)
   const [error, setError] = useState<string|null>(null)
@@ -60,11 +62,18 @@ export default function Home() {
         body: JSON.stringify(body),
       })
       const data = await res.json()
-      setList(data)
-      setFormMsg({
-        message: "Submitted successfully",
-        type: "success",
-      })
+      if (data && data.error == undefined){
+        setList(data)
+        setFormMsg({
+          message: "Submitted successfully",
+          type: "success",
+        })
+      }else{
+        setFormMsg({
+          message: "Failed to submit",
+          type: "error",
+        })
+      }
     } catch (err) {
       setFormMsg({
         message: "Failed to submit",
@@ -94,17 +103,30 @@ export default function Home() {
       
 
       <h2 className="font-bold text-4xl">Fun Coordinates Website</h2>
+      <p>test accounts: <span className="text-neutral-400">user - user123, admin - admin123</span></p>
 
-      <form onSubmit={submitHandler} className="bg-gray-800 flex flex-col p-2 rounded-md gap-1">
-        <label htmlFor="name">Name</label>
-        <input required type="text" id="name" name="name" className="bg-gray-700 p-2 rounded-md" />
-        <label htmlFor="lat">Latitude</label>
-        <input required type="number" id="lat" name="lat" className="bg-gray-700 p-2 rounded-md" />
-        <label htmlFor="lng">Longitude</label>
-        <input required type="number" id="lng" name="lng" className="bg-gray-700 p-2 rounded-md" />
-        <button className="cursor-pointer p-4 py-2 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded-md">Submit</button>
-        {formMsg && (<p className={"text-white rounded-md p-2 " + formMsgColors[formMsg.type]}>{formMsg.message}</p>)}
-      </form>
+      {role ? 
+      (
+        <p>Logged in as: <span className="font-black text-green-500">{role}</span></p>
+      ) : 
+      (
+        <Login setRole={setRole}/>
+      )}
+
+      {role==="user" ? (
+				<form onSubmit={submitHandler} className="bg-gray-800 flex flex-col p-2 rounded-md gap-1">
+          <label htmlFor="name">Name</label>
+          <input required type="text" id="name" name="name" className="bg-gray-700 p-2 rounded-md" />
+          <label htmlFor="lat">Latitude</label>
+          <input required type="number" id="lat" name="lat" className="bg-gray-700 p-2 rounded-md" />
+          <label htmlFor="lng">Longitude</label>
+          <input required type="number" id="lng" name="lng" className="bg-gray-700 p-2 rounded-md" />
+          <button className="cursor-pointer p-4 py-2 font-bold text-white bg-blue-500 hover:bg-blue-400 rounded-md">Submit</button>
+          {formMsg && (<p className={"text-white rounded-md p-2 " + formMsgColors[formMsg.type]}>{formMsg.message}</p>)}
+        </form>
+			) : (
+				<></>
+			)}
 
       <div className="bg-gray-800 flex flex-col p-2 rounded-md gap-4">
       
@@ -115,7 +137,7 @@ export default function Home() {
       ) : 
       (list.map(place => (
 
-        <Location key={place.id} id={place.id} name={place.name} lat={place.lat} lng={place.lng} setModal={setModal} setList={setList}/>
+        <Location role={role} key={place.id} id={place.id} name={place.name} lat={place.lat} lng={place.lng} setModal={setModal} setList={setList}/>
       
       )))}
 
