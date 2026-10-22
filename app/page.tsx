@@ -1,30 +1,33 @@
-'use client'
-import Image from "next/image";
+'use client';
+
 import { useEffect, useState } from "react";
 
+type ApiResponse = {
+  message: string;
+};
 
 export default function Home() {
+  const [data, setData] = useState<ApiResponse | null>(null);
 
-  const [data, setData] = useState(null)
+  async function getData(): Promise<void> {
+    const res = await fetch("/api/test");
+    const data: ApiResponse = await res.json();
 
-  async function getData() {
-    const res = await fetch("/api/test")
-    const data = await res.json()
-    console.log(data)
-    setData(data)
+    console.log(data);
+    setData(data);
   }
 
   useEffect(() => {
+    getData();
+  }, []);
 
-    getData()
-    
-  }, [])
-  
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <h1 className="text-4xl">
-        api message: 
-        <span className={data ? "text-green-400" : "text-amber-400"}>{data ? data.message : "LOADING"}</span>
+        API message:{" "}
+        <span className={data ? "text-green-400" : "text-amber-400"}>
+          {data ? data.message : "LOADING"}
+        </span>
       </h1>
     </div>
   );
